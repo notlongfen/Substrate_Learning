@@ -198,5 +198,23 @@ pub mod pallet {
 				},
 			}
 		}
+
+        #[pallet::call_index(2)]
+		#[pallet::weight({70_000_000})]
+		pub fn add(origin: OriginFor<T>, something: u32) -> DispatchResult {
+			// Check that the extrinsic was signed and get the signer.
+			let who = ensure_signed(origin)?;
+
+            let current_value = Something::<T>::get().unwrap();
+            let new_value = current_value + something;
+			// Update storage.
+			Something::<T>::put(new_value);
+
+			// Emit an event.
+			Self::deposit_event(Event::SomethingStored { something, who });
+
+			// Return a successful `DispatchResult`
+			Ok(())
+		}
 	}
 }
